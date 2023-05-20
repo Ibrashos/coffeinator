@@ -19,7 +19,7 @@ import sqlite3 as sq
 from dotenv import load_dotenv
 
 load_dotenv()
-bot = Bot(os.getenv("TOKEN"), parse_mode="HTML")
+bot = Bot(os.getenv("TOKEN_TGBOT"), parse_mode="HTML")
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
@@ -28,10 +28,11 @@ def coffe():
     return items
 
 def faq():
-    items = ['Вопрос Какие кофейные напитки вы предлагаете: Ответ Мы предлагаем широкий ассортимент кофейных напитков, включая эспрессо, капуччино, латте, американо, макиато и другие напитки, с которыми вы можете ознакомиться в разделе Меню. Вы можете выбрать напиток, который больше всего вам нравится.',
-             '',
-             '',
-             '']
+    items = ['Вопрос: Какие кофейные напитки вы предлагаете? Ответ Мы предлагаем широкий ассортимент кофейных напитков, включая эспрессо, капуччино, латте, американо, макиато и другие напитки, с которыми вы можете ознакомиться в разделе Меню. Вы можете выбрать напиток, который больше всего вам нравится.',
+             'Вопрос: Какие добавки и сиропы у вас есть для кофе? Ответ У нас есть разнообразие добавок и сиропов, чтобы удовлетворить ваши предпочтения. Вы можете добавить в свой кофе различные виды молока, сливки, ванильный сироп, кокосовую стружку и многое другое.',
+             'Вопрос: Каковы ваши рабочие часы? Ответ Наша кофейня работает с 800 утра до 1000 вечера с понедельника по пятницу, и с 900 утра до 900 вечера в выходные. Мы будем рады видеть вас в любое время в течение этих часов.',
+             ]
+    return items
 
 @dp.message_handler(commands=["start"])
 async def command_start_handler(message: Message) -> None:
@@ -55,10 +56,19 @@ async def message_handler(message: types.Message):
         for item in items:
             markup.add(item)
         await bot.send_message(message.chat.id, "Выберите кофе на заказ или вернитесь в начало. /cancel" ,reply_markup=markup)
+
+
+
     if message.text.lower() == 'faq':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add('Назад','Мой вопрос')
+        items = faq()
         await bot.send_message(message.chat.id, "что нибудь ", reply_markup=markup)
+
+
+
+
+
     if message.text.lower() == 'назад':
         items = coffe()
         markup = types.InlineKeyboardMarkup()
