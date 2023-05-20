@@ -88,9 +88,10 @@ async def message_handler(message: types.Message):
         await bot.send_message(message.chat.id, "Выберите кофе на заказ или вернитесь в начало. /cancel",
                                reply_markup=markup)
 
-# @dp.callback_query(Text('question1'))
-# async def send_answer(callback: types.CallbackQuery):
-#     await callback.message.answer('Ответ')
+
+@dp.callback_query(Text('question1'))
+async def send_answer(callback: types.CallbackQuery):
+    await callback.message.answer('Ответ')
 
 async def main() -> None:
     await dp.start_polling(bot)
