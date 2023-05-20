@@ -9,9 +9,11 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import ParseMode
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils import executor
 from aiogram import Bot, Dispatcher,types
 from aiogram.types import Message
+
 import sqlite3 as sq
 
 from dotenv import load_dotenv
@@ -25,6 +27,12 @@ def coffe():
     items = ['Эспрессо','Каппучино','Латте','Американо']
     return items
 
+def faq():
+    items = ['Вопрос Какие кофейные напитки вы предлагаете: Ответ Мы предлагаем широкий ассортимент кофейных напитков, включая эспрессо, капуччино, латте, американо, макиато и другие напитки, с которыми вы можете ознакомиться в разделе Меню. Вы можете выбрать напиток, который больше всего вам нравится.',
+             '',
+             '',
+             '']
+
 @dp.message_handler(commands=["start"])
 async def command_start_handler(message: Message) -> None:
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -32,6 +40,12 @@ async def command_start_handler(message: Message) -> None:
     item2 = f"FAQ"
     markup.add(item1, item2)
     await bot.send_message(message.chat.id, "Приветствую", reply_markup=markup)
+
+@dp.message_handler(commands='cancel')
+async def cancel_handler(message: types.Message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add('Меню', 'FAQ')
+    await message.reply('Операция отменена', reply_markup=markup)
 
 @dp.message_handler()
 async def message_handler(message: types.Message):
@@ -41,12 +55,18 @@ async def message_handler(message: types.Message):
         for item in items:
             markup.add(item)
         await bot.send_message(message.chat.id, "Выберите кофе на заказ или вернитесь в начало. /cancel" ,reply_markup=markup)
+    if message.text.lower() == 'faq':
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        markup.add('Назад','Мой вопрос')
+        await bot.send_message(message.chat.id, "что нибудь ", reply_markup=markup)
+    if message.text.lower() == 'назад':
+        items = coffe()
+        markup = types.InlineKeyboardMarkup()
+        for item in items:
+            markup.add(item)
+        await bot.send_message(message.chat.id, "Выберите кофе на заказ или вернитесь в начало. /cancel",
+                               reply_markup=markup)
 
-@dp.message_handler(state="*", commands="cancel")
-async def cancel_handler(message: types.message):
-    markup = types.ReplyKeyboardMarkup()
-    markup.add('Меню','FAQ')
-    await message.replay()
 
 
 
