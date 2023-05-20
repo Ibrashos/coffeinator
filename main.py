@@ -30,11 +30,11 @@ def coffe():
 
 
 def faq():
-    items = [
-        'Вопрос: Какие кофейные напитки вы предлагаете?'
-        '\n\nВопрос: Какие добавки и сиропы у вас есть для кофе?'
-        '\n\nВопрос: Каковы ваши рабочие часы?'
-    ]
+    items = {
+        'question1': 'Какие кофейные напитки вы предлагаете?',
+        'question2': 'Какие добавки и сиропы у вас есть для кофе?',
+        'question3': 'Каковы ваши рабочие часы?'
+    }
     return items
 
 
@@ -70,12 +70,14 @@ async def message_handler(message: types.Message):
     if message.text.lower() == 'faq':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add('Назад')
-        items = faq()
+        item = faq()
         kb = InlineKeyboardMarkup(row_width=1)
-        Button = InlineKeyboardButton(text='Перейти в блог Skillbox', callback_data='question1')
-        Button2 = InlineKeyboardButton(text='Перейти к курсам Skillbox', callback_data='question2')
-        kb.add(Button, Button2)
 
+        for key, value in item.items():
+            button = InlineKeyboardButton(text=value, callback_data=key)
+
+
+            kb.add(button)
         await bot.send_message(message.chat.id, "Частые вопросы:", reply_markup=kb)
 
 
@@ -86,6 +88,9 @@ async def message_handler(message: types.Message):
         await bot.send_message(message.chat.id, "Выберите кофе на заказ или вернитесь в начало. /cancel",
                                reply_markup=markup)
 
+# @dp.callback_query(Text('question1'))
+# async def send_answer(callback: types.CallbackQuery):
+#     await callback.message.answer('Ответ')
 
 async def main() -> None:
     await dp.start_polling(bot)
@@ -96,9 +101,7 @@ if __name__ == "__main__":
     asyncio.run(main())
 
 
-# @dp.callback_query(Text("random_value"))
-# async def send_random_value(callback: types.CallbackQuery):
-#     await callback.message.answer(str(randint(1, 10)))
+
 
  # Button = InlineKeyboardButton(text='Перейти в блог Skillbox', url='https://skillbox.ru/media/code/')
  # Button2 = InlineKeyboardButton(text='Перейти к курсам Skillbox', url='https://skillbox.ru/code/')
