@@ -18,6 +18,27 @@ from dotenv import load_dotenv
 
 load_dotenv()
 bot = Bot(os.getenv("TOKEN"), parse_mode="HTML")
+storage = MemoryStorage()
+dp = Dispatcher(bot, storage=storage)
+
+def coffe():
+    items = ['Эспрессо','Каппучино','Латте','Американо']
+    return items
+
+@dp.message_handler(commands=["start"])
+async def command_start_handler(message: Message) -> None:
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    item1 = f"Меню"
+    item2 = f"О нас"
+    markup.add(item1, item2)
+    await bot.send_message(message.chat.id, "Приветствую", reply_markup=markup)
+
+@dp.message_handler()
+async def message_handler(message: types.Message):
+    if message.text.lower() == 'меню':
+        items = coffe()
+        markup = types.ReplyKeyboardMarkup()
+        await bot.send_message(message.chat.id, reply_markup=)
 
 
 
@@ -36,11 +57,10 @@ bot = Bot(os.getenv("TOKEN"), parse_mode="HTML")
 
 
 
+async def main() -> None:
+    await dp.start_polling(bot)
 
-# async def main() -> None:
-#     await dp.start_polling(bot)
 
-
-# if __name__ == "__main__":
-#     logging.basicConfig(level=logging.INFO)
-#     asyncio.run(main())
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    asyncio.run(main())
