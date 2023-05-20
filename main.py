@@ -11,7 +11,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import ParseMode
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils import executor
-from aiogram import Bot, Dispatcher,types
+from aiogram import Bot, Dispatcher, types
 from aiogram.types import Message
 
 import sqlite3 as sq
@@ -23,16 +23,20 @@ bot = Bot(os.getenv("TOKEN_TGBOT"), parse_mode="HTML")
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
+
 def coffe():
-    items = ['Эспрессо','Каппучино','Латте','Американо']
+    items = ['Эспрессо', 'Каппучино', 'Латте', 'Американо']
     return items
 
+
 def faq():
-    items = ['Вопрос: Какие кофейные напитки вы предлагаете? Ответ Мы предлагаем широкий ассортимент кофейных напитков, включая эспрессо, капуччино, латте, американо, макиато и другие напитки, с которыми вы можете ознакомиться в разделе Меню. Вы можете выбрать напиток, который больше всего вам нравится.',
-             'Вопрос: Какие добавки и сиропы у вас есть для кофе? Ответ У нас есть разнообразие добавок и сиропов, чтобы удовлетворить ваши предпочтения. Вы можете добавить в свой кофе различные виды молока, сливки, ванильный сироп, кокосовую стружку и многое другое.',
-             'Вопрос: Каковы ваши рабочие часы? Ответ Наша кофейня работает с 800 утра до 1000 вечера с понедельника по пятницу, и с 900 утра до 900 вечера в выходные. Мы будем рады видеть вас в любое время в течение этих часов.',
-             ]
+    items = [
+        'Вопрос: Какие кофейные напитки вы предлагаете?'
+        '\n\nВопрос: Какие добавки и сиропы у вас есть для кофе?'
+        '\n\nВопрос: Каковы ваши рабочие часы?'
+    ]
     return items
+
 
 @dp.message_handler(commands=["start"])
 async def command_start_handler(message: Message) -> None:
@@ -42,12 +46,15 @@ async def command_start_handler(message: Message) -> None:
     markup.add(item1, item2)
     await bot.send_message(message.chat.id, "Приветствую", reply_markup=markup)
 
+
 @dp.message_handler(commands='cancel')
 async def cancel_handler(message: types.Message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add('Меню', 'FAQ')
     await message.reply('Операция отменена', reply_markup=markup)
 
+
+# МЕНЮ МЕНЮ МЕНЮ МЕНЮ МЕНЮ МЕНЮ МЕНЮ МЕНЮ МЕНЮ
 @dp.message_handler()
 async def message_handler(message: types.Message):
     if message.text.lower() == 'меню':
@@ -55,45 +62,29 @@ async def message_handler(message: types.Message):
         markup = types.ReplyKeyboardMarkup()
         for item in items:
             markup.add(item)
-        await bot.send_message(message.chat.id, "Выберите кофе на заказ или вернитесь в начало. /cancel" ,reply_markup=markup)
-
-
-
-    if message.text.lower() == 'faq':
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        markup.add('Назад','Мой вопрос')
-        items = faq()
-        await bot.send_message(message.chat.id, "что нибудь ", reply_markup=markup)
-
-
-
-
-
-    if message.text.lower() == 'назад':
-        items = coffe()
-        markup = types.InlineKeyboardMarkup()
-        for item in items:
-            markup.add(item)
         await bot.send_message(message.chat.id, "Выберите кофе на заказ или вернитесь в начало. /cancel",
                                reply_markup=markup)
 
 
+# FAQ FAQ FAQ FAQ FAQ FAQ FAQ FAQ FAQ FAQ FAQ FAQ
+    if message.text.lower() == 'faq':
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        markup.add('Назад')
+        items = faq()
+        kb = InlineKeyboardMarkup(row_width=1)
+        Button = InlineKeyboardButton(text='Перейти в блог Skillbox', callback_data='question1')
+        Button2 = InlineKeyboardButton(text='Перейти к курсам Skillbox', callback_data='question2')
+        kb.add(Button, Button2)
+
+        await bot.send_message(message.chat.id, "Частые вопросы:", reply_markup=kb)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# НАЗАД НАЗАД НАЗАД НАЗАД НАЗАД НАЗАД НАЗАД НАЗАД
+    if message.text.lower() == 'назад':
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        markup.add('Меню', 'FAQ')
+        await bot.send_message(message.chat.id, "Выберите кофе на заказ или вернитесь в начало. /cancel",
+                               reply_markup=markup)
 
 
 async def main() -> None:
@@ -103,3 +94,11 @@ async def main() -> None:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     asyncio.run(main())
+
+
+# @dp.callback_query(Text("random_value"))
+# async def send_random_value(callback: types.CallbackQuery):
+#     await callback.message.answer(str(randint(1, 10)))
+
+ # Button = InlineKeyboardButton(text='Перейти в блог Skillbox', url='https://skillbox.ru/media/code/')
+ # Button2 = InlineKeyboardButton(text='Перейти к курсам Skillbox', url='https://skillbox.ru/code/')
