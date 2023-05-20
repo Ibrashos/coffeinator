@@ -29,7 +29,7 @@ def coffe():
 async def command_start_handler(message: Message) -> None:
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     item1 = f"Меню"
-    item2 = f"О нас"
+    item2 = f"FAQ"
     markup.add(item1, item2)
     await bot.send_message(message.chat.id, "Приветствую", reply_markup=markup)
 
@@ -38,7 +38,16 @@ async def message_handler(message: types.Message):
     if message.text.lower() == 'меню':
         items = coffe()
         markup = types.ReplyKeyboardMarkup()
-        await bot.send_message(message.chat.id, reply_markup=)
+        for item in items:
+            markup.add(item)
+        await bot.send_message(message.chat.id, "Выберите кофе на заказ или вернитесь в начало. /cancel" ,reply_markup=markup)
+
+@dp.message_handler(state="*", commands="cancel")
+async def cancel_handler(message: types.message):
+    markup = types.ReplyKeyboardMarkup()
+    markup.add('Меню','FAQ')
+    await message.replay()
+
 
 
 
