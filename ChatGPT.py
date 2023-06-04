@@ -17,5 +17,3 @@ def chat(text: str, token: str = openai.api_key):
         presence_penalty=0)
     return response['choices'][0]['text']
 
-
-print(chat(text="hello"))
